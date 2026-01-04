@@ -7,10 +7,15 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Home = () => {
   const { allCoin, currency, isLoading } = useContext(CoinContext);
+
+const Home = () => {
+  const { allCoin, currency } = useContext(CoinContext);
+
   const [displayCoin, setDisplayCoin] = useState([]);
   const [input, setInput] = useState("");
   const [visibleCount, setVisibleCount] = useState(10);
   const [showFilters, setShowFilters] = useState(false);
+
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
@@ -94,6 +99,9 @@ const Home = () => {
       </div>
     );
   }
+  useEffect(() => {
+    setDisplayCoin(allCoin);
+  }, [allCoin]);
 
   return (
     <div className="home">
@@ -101,6 +109,10 @@ const Home = () => {
         <h1 data-aos="fade-in" className="hero-title">Discover & Track Crypto Instantly</h1>
         <p data-aos="fade-in" className="hero-sub">
           Welcome to CryptoHub — your gateway to real-time prices, trending coins, and powerful analytics.
+        <h1 className="hero-title">Discover & Track Crypto Instantly</h1>
+        <p className="hero-sub">
+          Welcome to CryptoHub — your gateway to real-time prices, trending coins,
+          and powerful analytics.
         </p>
 
         <div className="search-wrapper">
@@ -121,6 +133,7 @@ const Home = () => {
             </datalist>
 
             <button type="submit" disabled={isLoading}>Search</button>
+            <button type="submit">Search</button>
 
             <button
               type="button"
@@ -134,6 +147,8 @@ const Home = () => {
 
           {showFilters && (
             <div className="filter-panel right">
+              
+
               <div className="filter-group">
                 <label>Min Price</label>
                 <input
@@ -164,6 +179,47 @@ const Home = () => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="crypto-table">
+        <div className="table-layout">
+          <p>#</p>
+          <p>Coins</p>
+          <p>Price</p>
+          <p style={{ textAlign: "center" }}>24h Change</p>
+          <p className="market-cap">Market Cap</p>
+        </div>
+
+        {displayCoin.slice(0, visibleCount).map((item, index) => (
+          <Link
+            to={`/coin/${item.id}`}
+            className="table-layout"
+            key={index}
+            data-aos="fade-up"
+          >
+            <p>{item.market_cap_rank}</p>
+            <div>
+              <img src={item.image} alt={item.name} width="40" height="40"></img>
+              <p>{item.name + " - " + item.symbol}</p>
+            </div>
+            <p>{currency.Symbol}{item.current_price.toLocaleString()}</p>
+            <p className={item.price_change_percentage_24h > 0 ? "green" : "red"}>
+              {item.price_change_percentage_24h.toFixed(2)}
+            </p>
+            <p className="market-cap">
+              {currency.Symbol}{item.market_cap.toLocaleString()}
+            </p>
+          </Link>
+        ))}
+
+        {/* Load More Button */}
+        {visibleCount < displayCoin.length && (
+          <div className="load-more">
+            <button onClick={() => setVisibleCount(visibleCount + 10)}>
+              Load More
+            </button>
+          </div>
+        )}
       </div>
       
       {isLoading && allCoin.length > 0 ? (

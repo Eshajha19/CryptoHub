@@ -33,6 +33,10 @@ const App = () => {
     });
   }, []);
 
+const App = () => {
+  const location = useLocation();
+  const isDashboard = location.pathname === "/dashboard";
+
   return (
     <ThemeProvider>
       <AuthProvider>
